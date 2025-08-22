@@ -1,0 +1,14 @@
+radio = playlist("/radio/music/*")
+
+security = single("/radio/intermission/main.mp3")
+
+radio = fallback(track_sensitive=false, [radio, security])
+
+output.icecast(
+  %mp3,
+  host="icecast",
+  port=8000,
+  password="${ICECAST_SOURCE_PASSWORD}",
+  mount="main",
+  radio
+)

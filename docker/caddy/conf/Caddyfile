@@ -1,0 +1,11 @@
+:80 {
+
+    root * /usr/share/caddy
+
+    file_server
+
+    handle_path /radio/* {
+        reverse_proxy http://icecast:8000
+    }
+
+}

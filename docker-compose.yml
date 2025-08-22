@@ -1,0 +1,34 @@
+services:
+
+  icecast:
+    build:
+      context: docker/icecast
+    environment:
+      ICECAST_HOSTNAME: "${ICECAST_HOSTNAME:-localhost}"
+      ICECAST_ADMIN: "${ICECAST_ADMIN:-admin@localhost}"
+      ICECAST_LOCATION: "${ICECAST_LOCATION:-Earth}"
+      ICECAST_SOURCE_PASSWORD: "${ICECAST_SOURCE_PASSWORD:-password}"
+      ICECAST_RELAY_PASSWORD: "${ICECAST_RELAY_PASSWORD:-password}"
+      ICECAST_ADMIN_USER: "${ICECAST_ADMIN_USER:-admin}"
+      ICECAST_ADMIN_PASSWORD: "${ICECAST_ADMIN_PASSWORD:-password}"
+
+  liquidsoap:
+    build:
+      context: docker/liquidsoap
+    environment:
+      ICECAST_SOURCE_PASSWORD: "${ICECAST_SOURCE_PASSWORD:-password}"
+    volumes:
+      - ./radio:/radio
+
+  caddy:
+    image: caddy
+    volumes:
+      - caddy-data:/data
+      - ./dist:/usr/share/caddy
+      - ./docker/caddy/conf:/etc/caddy
+    ports:
+      - 80:80
+      - 443:443
+
+volumes:
+  caddy-data:

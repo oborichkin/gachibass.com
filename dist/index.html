@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pip-Boy Radio</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    
+    :root {
+      --pip-boy-green: #00ff00;
+      --pip-boy-dark: #072813;
+      --pip-boy-darker: #051a0d;
+      --pip-boy-border: #0f3;
+      --pip-boy-glow: rgba(0, 255, 0, 0.5);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: black;
+      color: var(--pip-boy-green);
+      font-family: 'Share Tech Mono', monospace;
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    
+    /* CRT Screen Effect */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 30, 0, 0.1);
+      pointer-events: none;
+      z-index: 100;
+      animation: flicker 10s infinite;
+    }
+    
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 0.1;
+      }
+      20%, 24%, 55% {
+        opacity: 0.2;
+      }
+    }
+    
+    .pip-boy-container {
+      width: 95%;
+      max-width: 500px;
+      background-color: var(--pip-boy-dark);
+      border: 4px solid var(--pip-boy-border);
+      border-radius: 10px;
+      box-shadow: 0 0 15px var(--pip-boy-glow),
+                  inset 0 0 15px var(--pip-boy-glow);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .pip-boy-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        transparent 0px,
+        transparent 1px,
+        var(--pip-boy-darker) 1px,
+        var(--pip-boy-darker) 2px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .screen {
+      background-color: var(--pip-boy-darker);
+      border: 2px solid var(--pip-boy-green);
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--pip-boy-green);
+      padding-bottom: 10px;
+    }
+    
+    .header h1 {
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 5px var(--pip-boy-green);
+    }
+    
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .radio-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .station-display {
+      background-color: black;
+      border: 1px solid var(--pip-boy-green);
+      padding: 10px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .volume-slider {
+      flex-grow: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      background: black;
+      border: 1px solid var(--pip-boy-green);
+      outline: none;
+    }
+    
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: var(--pip-boy-green);
+      cursor: pointer;
+      border-radius: 0;
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    
+    .pip-btn {
+      background-color: black;
+      color: var(--pip-boy-green);
+      border: 2px solid var(--pip-boy-green);
+      padding: 8px 15px;
+      font-family: 'Share Tech Mono', monospace;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 5px var(--pip-boy-glow);
+    }
+    
+    .pip-btn:hover {
+      background-color: var(--pip-boy-green);
+      color: black;
+      box-shadow: 0 0 10px var(--pip-boy-green);
+    }
+    
+    .knobs {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+    
+    .knob {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #222, #000);
+      border: 2px solid var(--pip-boy-green);
+      box-shadow: 0 0 5px var(--pip-boy-green);
+      position: relative;
+    }
+    
+    .knob::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 20px;
+      background-color: var(--pip-boy-green);
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    
+    /* Hidden audio element */
+    #radio-player {
+      display: none;
+    }
+    
+    /* Scanning animation */
+    @keyframes scan {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100%);
+      }
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--pip-boy-green),
+        transparent
+      );
+      opacity: 0.1;
+      animation: scan 5s linear infinite;
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="pip-boy-container">
+    <div class="scan-line"></div>
+    <div class="screen">
+      <div class="header">
+        <h1>Pip-Boy Radio</h1>
+      </div>
+      
+      <div class="status-bar">
+        <span>STATUS: ONLINE</span>
+        <span>FREQ: 108.7 FM</span>
+        <span>PWR: 98%</span>
+      </div>
+      
+      <div class="radio-controls">
+        <div class="station-display" id="station-display">
+          GALAXY NEWS RADIO
+        </div>
+        
+        <div class="volume-control">
+          <span>VOL:</span>
+          <input type="range" min="0" max="100" value="80" class="volume-slider" id="volume-slider">
+          <span id="volume-value">80%</span>
+        </div>
+        
+        <div class="knobs">
+          <div class="knob" id="tune-knob"></div>
+          <div class="knob" id="power-knob"></div>
+        </div>
+        
+        <div class="buttons">
+          <button class="pip-btn" id="btn-play">Play</button>
+          <button class="pip-btn" id="btn-pause">Pause</button>
+          <button class="pip-btn" id="btn-scan">Scan</button>
+        </div>
+      </div>
+      
+      <div class="footer">
+        VAULT-TEC MULTISERVICE UNIT v2.3.7
+      </div>
+    </div>
+  </div>
+
+  <audio id="radio-player" controls autoplay loop>
+    <source src="/radio/main">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const player = document.getElementById('radio-player');
+      const volumeSlider = document.getElementById('volume-slider');
+      const volumeValue = document.getElementById('volume-value');
+      const stationDisplay = document.getElementById('station-display');
+      const btnPlay = document.getElementById('btn-play');
+      const btnPause = document.getElementById('btn-pause');
+      const btnScan = document.getElementById('btn-scan');
+      const tuneKnob = document.getElementById('tune-knob');
+      
+      // Set initial volume
+      player.volume = volumeSlider.value / 100;
+      
+      // Volume control
+      volumeSlider.addEventListener('input', function() {
+        player.volume = this.value / 100;
+        volumeValue.textContent = `${this.value}%`;
+      });
+      
+      // Play button
+      btnPlay.addEventListener('click', function() {
+        player.play();
+        stationDisplay.textContent = "GALAXY NEWS RADIO";
+      });
+      
+      // Pause button
+      btnPause.addEventListener('click', function() {
+        player.pause();
+        stationDisplay.textContent = "SIGNAL LOST";
+      });
+      
+      // Scan button
+      btnScan.addEventListener('click', function() {
+        stationDisplay.textContent = "SCANNING...";
+        setTimeout(function() {
+          stationDisplay.textContent = "THREE DOG AWOOOO!";
+          player.play();
+        }, 2000);
+      });
+      
+      // Simple knob rotation for tuning
+      let rotation = 0;
+      tuneKnob.addEventListener('click', function() {
+        rotation += 45;
+        this.style.transform = `rotate(${rotation}deg)`;
+        
+        // Simulate tuning to different stations
+        const stations = [
+          "GALAXY NEWS RADIO",
+          "ENCLAVE RADIO",
+          "DIAMOND CITY RADIO",
+          "MYSTERIOUS SIGNAL",
+          "STATIC NOISE"
+        ];
+        
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        stationDisplay.textContent = randomStation;
+      });
+      
+      // Add static effect when audio is loading/buffering
+      player.addEventListener('waiting', function() {
+        stationDisplay.textContent = "BUFFERING...";
+      });
+      
+      player.addEventListener('playing', function() {
+        stationDisplay.textContent = "GALAXY NEWS RADIO";
+      });
+    });
+  </script>
+</body>
+</html>
