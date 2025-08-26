@@ -11,6 +11,7 @@ services:
       ICECAST_RELAY_PASSWORD: "${ICECAST_RELAY_PASSWORD:-password}"
       ICECAST_ADMIN_USER: "${ICECAST_ADMIN_USER:-admin}"
       ICECAST_ADMIN_PASSWORD: "${ICECAST_ADMIN_PASSWORD:-password}"
+    restart: always
 
   liquidsoap:
     build:
@@ -19,6 +20,7 @@ services:
       ICECAST_SOURCE_PASSWORD: "${ICECAST_SOURCE_PASSWORD:-password}"
     volumes:
       - ./radio:/radio
+    restart: always
 
   caddy:
     image: caddy
@@ -29,6 +31,7 @@ services:
     ports:
       - 80:80
       - 443:443
+    restart: always
 
 volumes:
   caddy-data:
