@@ -15,11 +15,11 @@ services:
       ICECAST_ADMIN_PASSWORD: "${ICECAST_ADMIN_PASSWORD:-password}"
     restart: always
 
-  liquidsoap:
+  streamer:
     build:
-      context: docker/liquidsoap
+      context: streamer/
     environment:
-      ICECAST_SOURCE_PASSWORD: "${ICECAST_SOURCE_PASSWORD:-password}"
+      BOT_TOKEN: "${STREAMER_BOT_TOKEN:?Err}"
     volumes:
       - ./radio:/radio
     restart: always

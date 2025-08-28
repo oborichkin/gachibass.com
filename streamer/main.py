@@ -11,8 +11,7 @@ from typing import List, Optional, Dict, Any
 
 
 gi.require_version('Gst', '1.0')
-gi.require_version('GstApp', '1.0')
-from gi.repository import Gst, GstApp, GLib
+from gi.repository import Gst, GLib
 
 
 class IcecastStreamer(threading.Thread):
@@ -176,12 +175,12 @@ class IcecastStreamer(threading.Thread):
             self.pipeline.set_state(Gst.State.NULL)
 
 
-MUSIC_DIRECTORY = "music/"  # Change this to your music directory
+MUSIC_DIRECTORY = "/radio/music/"  # Change this to your music directory
 ICECAST_CONFIG = {
-    "server": "localhost",  # Change to your Icecast server
+    "server": "icecast",  # Change to your Icecast server
     "port": 8000,                         # Change to your Icecast port
     "password": "password",          # Change to your Icecast password
-    "mount": "/new",               # Change to your mount point
+    "mount": "/main",               # Change to your mount point
     "username": "source",                 # Typically 'source' for Icecast
     "stream_name": "My Music Stream",     # Your stream name
 }
