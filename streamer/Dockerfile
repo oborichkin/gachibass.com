@@ -9,7 +9,8 @@ RUN apt-get install -y --no-install-recommends gstreamer-1.0
 RUN apt-get install -y --no-install-recommends gstreamer1.0-plugins-good
 
 WORKDIR /app
-ADD main.py uv.lock pyproject.toml .
+ADD uv.lock pyproject.toml config.yml .
+ADD src /app/src
 RUN uv sync --locked
 
-ENTRYPOINT [ "uv", "run", "main.py" ]
+ENTRYPOINT [ "uv", "run", "python", "-m", "gachibass" ]

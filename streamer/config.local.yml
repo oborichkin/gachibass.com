@@ -1,0 +1,13 @@
+icecast:
+  server: localhost
+  port: 8000
+  password: password
+  username: source
+
+streams:
+  main:
+    name: Main Music Stream
+    mount: /main
+    playlist: ../music/main/
+    admins:
+      - 98600132
