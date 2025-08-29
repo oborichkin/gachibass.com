@@ -4,6 +4,9 @@ icecast:
   password: password
   username: source
 
+admins:
+  - 98600132
+
 streams:
   main:
     name: Main Music Stream

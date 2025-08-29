@@ -5,7 +5,7 @@ import pathlib
 import threading
 from typing import List, Dict
 
-from .common import IcecastConfig
+from ..common import IcecastConfig
 
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst, GLib
@@ -15,12 +15,6 @@ Gst.init(None)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-streams: Dict[str, "RadioStation"] = {}
-
-
-def is_admin(station_id: str, user_id: int):
-    return user_id in streams[station_id].admins
-
 
 class RadioStation(threading.Thread):
     def __init__(
@@ -29,7 +23,6 @@ class RadioStation(threading.Thread):
             music_directory: str,
             icecast_config: IcecastConfig,
             mount: str,
-            admins: List[int],
             *args, **kwargs
         ):
 
@@ -37,7 +30,6 @@ class RadioStation(threading.Thread):
         self.music_directory = pathlib.Path(music_directory)
         self.icecast_config = icecast_config
         self.mount = mount
-        self.admins = admins
 
         self.playlist: List[str] = []
 

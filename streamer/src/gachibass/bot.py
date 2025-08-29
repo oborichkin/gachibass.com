@@ -4,7 +4,7 @@ import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-from gachibass.stream import streams, is_admin
+from streamer.src.gachibass.streaming.stream import streams, is_admin
 
 logger = logging.getLogger(__name__)
 
