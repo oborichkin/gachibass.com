@@ -1,17 +1,10 @@
-from typing import Dict
+"""Streaming submodule for radio station management.
+
+This submodule handles all audio streaming functionality using GStreamer
+and provides a station manager for controlling multiple radio stations.
+"""
+
 from .stream import RadioStation
+from .manager import StationManager
 
-
-__streams: Dict[str, "RadioStation"] = {}
-
-
-def is_admin(station_id: str, user_id: int):
-    return True
-
-
-def add_new_station(station_id, station_config):
-    pass
-
-
-def delete_station(station_id):
-    pass
+__all__ = ["RadioStation", "StationManager"]

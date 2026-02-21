@@ -19,7 +19,7 @@ services:
     build:
       context: streamer/
     environment:
-      BOT_TOKEN: "${STREAMER_BOT_TOKEN:?Err}"
+      STREAMER_BOT_TOKEN: "${STREAMER_BOT_TOKEN:?Err}"
     volumes:
       - ./music:/music
     restart: always

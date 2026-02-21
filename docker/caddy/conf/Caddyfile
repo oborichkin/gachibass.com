@@ -4,7 +4,8 @@
 
     file_server
 
-    reverse_proxy /radio/* http://icecast:8000
-    reverse_proxy /api/* http://streamer:5000
+    handle_path /radio/* {
+        reverse_proxy http://icecast:8000
+    }
 
 }
