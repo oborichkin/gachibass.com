@@ -28,7 +28,7 @@ services:
     image: caddy
     volumes:
       - caddy-data:/data
-      - ./dist:/usr/share/caddy
+      - ./web/dist:/usr/share/caddy
       - ./docker/caddy/conf:/etc/caddy
     ports:
       - 80:80
